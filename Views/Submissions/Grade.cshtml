@@ -1,0 +1,111 @@
+@model EduTrack.Models.Submission
+@{
+    ViewData["Title"] = "تصحيح التسليم";
+    Layout = "_Layout";
+}
+
+<div class="container py-4">
+    @if (Model?.Assignment != null)
+    {
+        <a asp-controller="Assignments" asp-action="Details" asp-route-id="@Model.AssignmentId"
+           class="btn btn-outline-secondary btn-sm mb-4">
+            ← العودة للتاسك
+        </a>
+    }
+
+    @if (Model == null)
+    {
+        <div class="alert alert-warning">لم يتم العثور على هذا التسليم.</div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-md-5">
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-light fw-bold">تفاصيل التسليم</div>
+                    <div class="card-body">
+                        <table class="table table-borderless mb-0">
+                            <tr>
+                                <th>الطالب:</th>
+                                <td>@(Model.student?.FullName ?? "غير معروف")</td>
+                            </tr>
+                            <tr>
+                                <th>التاسك:</th>
+                                <td>@(Model.Assignment?.Title ?? "-")</td>
+                            </tr>
+                            <tr>
+                                <th>تاريخ التسليم:</th>
+                                <td>@Model.SubmittedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                            </tr>
+                            <tr>
+                                <th>الحالة:</th>
+                                <td>
+                                    @if (Model.Status == "Graded")
+                                    {
+                                        <span class="badge bg-success">تم التصحيح</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning text-dark">قيد المراجعة</span>
+                                    }
+                                </td>
+                            </tr>
+                            @if (!string.IsNullOrEmpty(Model.StudentNotes))
+                            {
+                                <tr>
+                                    <th>ملاحظات الطالب:</th>
+                                    <td>@Model.StudentNotes</td>
+                                </tr>
+                            }
+                        </table>
+                        <a href="~/uploads/submissions/@Model.SolutionFilePath"
+                           target="_blank"
+                           class="btn btn-outline-info btn-sm mt-2">
+                            📎 تحميل ملف الحل
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-7">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-primary text-white fw-bold">إدخال الدرجة والتقييم</div>
+                    <div class="card-body p-4">
+                        <form method="post"
+                              asp-controller="Submissions"
+                              asp-action="Grade"
+                              asp-route-Id="@Model.Id">
+                            @Html.AntiForgeryToken()
+
+                            <div class="mb-3">
+                                <label for="grade" class="form-label fw-semibold">
+                                    الدرجة
+                                    @if (Model.Assignment != null)
+                                    {
+                                        <span class="text-muted small">(من @Model.Assignment.MaxDegree)</span>
+                                    }
+                                </label>
+                                <input type="number"
+                                       id="grade"
+                                       name="grade"
+                                       class="form-control"
+                                       min="0"
+                                       max="@(Model.Assignment?.MaxDegree ?? 100)"
+                                       value="@(Model.Grade.HasValue ? Model.Grade.ToString() : "")"
+                                       required />
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="feedback" class="form-label fw-semibold">تعليق المحاضر (Feedback)</label>
+                                <textarea id="feedback" name="feedback" class="form-control" rows="4"
+                                          placeholder="اكتب ملاحظاتك وتعليقاتك على حل الطالب...">@Model.InstructorFeedback</textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary px-4">حفظ التقييم</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

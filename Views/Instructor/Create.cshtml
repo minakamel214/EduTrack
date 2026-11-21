@@ -1,0 +1,63 @@
+@model EduTrack.Models.Instructor
+@{
+    ViewData["Title"] = "إضافة محاضر جديد";
+    Layout = "_Layout";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h2 class="card-title fw-bold text-primary mb-4">إضافة محاضر جديد</h2>
+
+                    <form method="post"
+                          asp-controller="Instructor"
+                          asp-action="Create"
+                          enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+
+                        <div class="mb-3">
+                            <label asp-for="FullName" class="form-label fw-semibold"></label>
+                            <input asp-for="FullName" class="form-control" placeholder="أحمد محمود" />
+                            <span asp-validation-for="FullName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label fw-semibold"></label>
+                            <input asp-for="Email" type="email" class="form-control" placeholder="instructor@example.com" />
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Specialization" class="form-label fw-semibold"></label>
+                            <input asp-for="Specialization" class="form-control" placeholder="تطوير الويب، علم البيانات، ..." />
+                            <span asp-validation-for="Specialization" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Bio" class="form-label fw-semibold"></label>
+                            <textarea asp-for="Bio" class="form-control" rows="3" placeholder="نبذة مختصرة عن المحاضر..."></textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="ImageFile" class="form-label fw-semibold">الصورة الشخصية (اختياري)</label>
+                            <input type="file" id="ImageFile" name="ImageFile"
+                                   class="form-control" accept="image/*" />
+                            <div class="form-text text-muted">صيغ مقبولة: JPG، PNG، GIF</div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary px-4">حفظ</button>
+                            <a asp-controller="Instructor" asp-action="Index" class="btn btn-outline-secondary">إلغاء</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

@@ -1,0 +1,61 @@
+@model List<EduTrack.Models.Instructor>
+@{
+    ViewData["Title"] = "المحاضرون";
+    Layout = "_Layout";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0">قائمة المحاضرين</h2>
+        <a asp-controller="Instructor" asp-action="Create" class="btn btn-primary">
+            + إضافة محاضر جديد
+        </a>
+    </div>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info text-center">لا يوجد محاضرون مسجلون بعد.</div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var instructor in Model)
+            {
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="text-center pt-4">
+                            @if (!string.IsNullOrEmpty(instructor.ImagePath))
+                            {
+                                <img src="~/images/instructors/@instructor.ImagePath"
+                                     alt="@instructor.FullName"
+                                     class="rounded-circle"
+                                     style="width:90px;height:90px;object-fit:cover;" />
+                            }
+                            else
+                            {
+                                <div class="rounded-circle bg-secondary d-inline-flex align-items-center justify-content-center"
+                                     style="width:90px;height:90px;font-size:2rem;color:white;">
+                                    👤
+                                </div>
+                            }
+                        </div>
+                        <div class="card-body text-center">
+                            <h5 class="card-title fw-bold">@instructor.FullName</h5>
+                            <p class="text-muted mb-1">@instructor.Specialization</p>
+                            <p class="text-muted small">@instructor.Email</p>
+                            <span class="badge bg-info text-dark">
+                                @instructor.Courses.Count كورس
+                            </span>
+                        </div>
+                        <div class="card-footer bg-transparent text-center border-0 pb-3">
+                            <a asp-controller="Instructor" asp-action="Details" asp-route-id="@instructor.Id"
+                               class="btn btn-outline-primary btn-sm">
+                                عرض التفاصيل
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

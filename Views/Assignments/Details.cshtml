@@ -1,0 +1,130 @@
+@model EduTrack.Models.Assignment
+@{
+    ViewData["Title"] = Model.Title;
+    Layout = "_Layout";
+}
+
+<div class="container py-4">
+    @if (Model.Course != null)
+    {
+        <a asp-controller="Courses" asp-action="Details" asp-route-id="@Model.CourseId"
+           class="btn btn-outline-secondary btn-sm mb-4">
+            ← العودة للكورس: @Model.Course.Title
+        </a>
+    }
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h2 class="fw-bold mb-1">@Model.Title</h2>
+                    @if (Model.Course != null)
+                    {
+                        <p class="text-muted mb-0">
+                            الكورس: <strong>@Model.Course.Title</strong>
+                        </p>
+                    }
+                </div>
+                <span class="badge bg-primary fs-6">@Model.MaxDegree درجة</span>
+            </div>
+
+            <hr />
+
+            <p class="text-dark">@Model.Description</p>
+
+            <div class="d-flex flex-wrap gap-3 mt-3">
+                <div>
+                    <span class="fw-semibold">الموعد النهائي: </span>
+                    <span class="@(Model.Deadline < DateTime.Now ? "text-danger fw-bold" : "text-success fw-bold")">
+                        @Model.Deadline.ToString("dd/MM/yyyy HH:mm")
+                        @if (Model.Deadline < DateTime.Now)
+                        {
+                            <span class="badge bg-danger ms-1">منتهي</span>
+                        }
+                    </span>
+                </div>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.AttachmentFilePath))
+            {
+                <div class="mt-3">
+                    <a href="~/uploads/assignments/@Model.AttachmentFilePath"
+                       target="_blank"
+                       class="btn btn-outline-info btn-sm">
+                        📎 تحميل ملف التاسك (PDF)
+                    </a>
+                </div>
+            }
+
+            @if (User.IsInRole("Student"))
+            {
+                <div class="mt-3">
+                    <a asp-controller="Submissions" asp-action="Submit" asp-route-assignmentId="@Model.Id"
+                       class="btn btn-success">
+                        📤 تسليم الحل
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- تسليمات الطلاب (للمحاضر والأدمن) -->
+    @if (User.IsInRole("Instructor") || User.IsInRole("Admin"))
+    {
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-primary text-white fw-bold">
+                التسليمات (@Model.Submissions.Count)
+            </div>
+            <div class="card-body">
+                @if (!Model.Submissions.Any())
+                {
+                    <p class="text-muted mb-0">لا توجد تسليمات بعد.</p>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>اسم الطالب</th>
+                                    <th>تاريخ التسليم</th>
+                                    <th>الحالة</th>
+                                    <th>الدرجة</th>
+                                    <th>إجراء</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var sub in Model.Submissions)
+                                {
+                                    <tr>
+                                        <td>@(sub.student?.FullName ?? "غير معروف")</td>
+                                        <td>@sub.SubmittedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                                        <td>
+                                            @if (sub.Status == "Graded")
+                                            {
+                                                <span class="badge bg-success">تم التصحيح</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-warning text-dark">قيد المراجعة</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @(sub.Grade.HasValue ? sub.Grade.ToString() : "-")
+                                        </td>
+                                        <td>
+                                            <a asp-controller="Submissions" asp-action="Grade" asp-route-Id="@sub.Id"
+                                               class="btn btn-outline-primary btn-sm">
+                                                تصحيح
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>

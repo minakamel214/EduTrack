@@ -1,0 +1,74 @@
+@model EduTrack.Models.Course
+@{
+    ViewData["Title"] = "إضافة كورس جديد";
+    Layout = "_Layout";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h2 class="card-title fw-bold text-primary mb-4">إضافة كورس جديد</h2>
+
+                    <form method="post"
+                          asp-controller="Courses"
+                          asp-action="Create"
+                          enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+
+                        <div class="mb-3">
+                            <label asp-for="Title" class="form-label fw-semibold"></label>
+                            <input asp-for="Title" class="form-control" placeholder="مثال: تطوير تطبيقات ويب باستخدام ASP.NET Core" />
+                            <span asp-validation-for="Title" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label fw-semibold"></label>
+                            <textarea asp-for="Description" class="form-control" rows="4"
+                                      placeholder="وصف تفصيلي للكورس..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="TotalHours" class="form-label fw-semibold"></label>
+                            <input asp-for="TotalHours" type="number" class="form-control" min="1" max="500" />
+                            <span asp-validation-for="TotalHours" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="InstructorId" class="form-label fw-semibold">المحاضر</label>
+                            <select asp-for="InstructorId" class="form-select">
+                                <option value="">-- اختر المحاضر --</option>
+                                @if (ViewBag.Instructors != null)
+                                {
+                                    foreach (var instructor in (List<EduTrack.Models.Instructor>)ViewBag.Instructors)
+                                    {
+                                        <option value="@instructor.Id">@instructor.FullName</option>
+                                    }
+                                }
+                            </select>
+                            <span asp-validation-for="InstructorId" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="ThumbnailFile" class="form-label fw-semibold">صورة الغلاف (اختياري)</label>
+                            <input type="file" id="ThumbnailFile" name="ThumbnailFile"
+                                   class="form-control" accept="image/*" />
+                            <div class="form-text text-muted">صيغ مقبولة: JPG، PNG، GIF</div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary px-4">حفظ</button>
+                            <a asp-controller="Courses" asp-action="Index" class="btn btn-outline-secondary">إلغاء</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

@@ -1,0 +1,50 @@
+@{
+    ViewData["Title"] = "إنشاء حساب جديد";
+    Layout = "_Layout";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h2 class="card-title text-center mb-4 fw-bold text-primary">إنشاء حساب جديد</h2>
+
+                    @if (ViewBag.ErrorMessage != null)
+                    {
+                        <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
+                    }
+
+                    <form method="post" asp-controller="Account" asp-action="Register">
+                        @Html.AntiForgeryToken()
+                        <div class="mb-3">
+                            <label for="fullName" class="form-label fw-semibold">الاسم بالكامل</label>
+                            <input type="text" id="fullName" name="fullName" class="form-control" placeholder="محمد أحمد" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label fw-semibold">البريد الإلكتروني</label>
+                            <input type="email" id="email" name="email" class="form-control" placeholder="example@mail.com" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="address" class="form-label fw-semibold">العنوان</label>
+                            <input type="text" id="address" name="address" class="form-control" placeholder="القاهرة، مصر" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label fw-semibold">كلمة المرور</label>
+                            <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required />
+                        </div>
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-success btn-lg">إنشاء الحساب</button>
+                        </div>
+                    </form>
+
+                    <hr />
+                    <p class="text-center text-muted mb-0">
+                        لديك حساب بالفعل؟
+                        <a asp-controller="Account" asp-action="Login" class="text-decoration-none">تسجيل الدخول</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

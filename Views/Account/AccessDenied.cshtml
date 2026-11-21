@@ -1,0 +1,17 @@
+@{
+    ViewData["Title"] = "غير مصرح";
+    Layout = "_Layout";
+}
+
+<div class="container py-5 text-center">
+    <div class="mb-4">
+        <span style="font-size: 5rem;">🚫</span>
+    </div>
+    <h1 class="display-5 fw-bold text-danger">غير مصرح بالدخول</h1>
+    <p class="lead text-muted mt-3">
+        ليس لديك صلاحية للوصول إلى هذه الصفحة.
+    </p>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-primary btn-lg mt-3">
+        العودة للرئيسية
+    </a>
+</div>

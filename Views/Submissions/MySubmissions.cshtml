@@ -1,0 +1,90 @@
+@model List<EduTrack.Models.Submission>
+@{
+    ViewData["Title"] = "تسليماتي";
+    Layout = "_Layout";
+}
+
+<div class="container py-4">
+    <h2 class="fw-bold mb-4">تسليماتي</h2>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info text-center">
+            لم تقم بأي تسليم حتى الآن.
+            <a asp-controller="Courses" asp-action="Index" class="ms-2">استعراض الكورسات</a>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle shadow-sm">
+                <thead class="table-primary">
+                    <tr>
+                        <th>التاسك</th>
+                        <th>الكورس</th>
+                        <th>تاريخ التسليم</th>
+                        <th>الحالة</th>
+                        <th>الدرجة</th>
+                        <th>تعليق المحاضر</th>
+                        <th>ملف الحل</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var sub in Model)
+                    {
+                        <tr>
+                            <td class="fw-semibold">@(sub.Assignment?.Title ?? "-")</td>
+                            <td>@(sub.Assignment?.Course?.Title ?? "-")</td>
+                            <td>@sub.SubmittedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>
+                                @if (sub.Status == "Graded")
+                                {
+                                    <span class="badge bg-success">تم التصحيح</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">قيد المراجعة</span>
+                                }
+                            </td>
+                            <td>
+                                @if (sub.Grade.HasValue)
+                                {
+                                    <strong class="text-success">@sub.Grade</strong>
+                                    @if (sub.Assignment != null)
+                                    {
+                                        <span class="text-muted small"> / @sub.Assignment.MaxDegree</span>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="text-muted">-</span>
+                                }
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(sub.InstructorFeedback))
+                                {
+                                    <span class="text-muted small" title="@sub.InstructorFeedback">
+                                        @(sub.InstructorFeedback.Length > 60
+                                            ? sub.InstructorFeedback.Substring(0, 60) + "..."
+                                            : sub.InstructorFeedback)
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">-</span>
+                                }
+                            </td>
+                            <td>
+                                <a href="~/uploads/submissions/@sub.SolutionFilePath"
+                                   target="_blank"
+                                   class="btn btn-outline-secondary btn-sm">
+                                    تحميل
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

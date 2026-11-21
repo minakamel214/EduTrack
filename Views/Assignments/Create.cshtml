@@ -1,0 +1,83 @@
+@model EduTrack.ViewModels.CreateAssignmentViewModel
+@{
+    ViewData["Title"] = "إضافة تاسك جديد";
+    Layout = "_Layout";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h2 class="card-title fw-bold text-primary mb-1">إضافة تاسك جديد</h2>
+                    @if (!string.IsNullOrEmpty(Model?.CourseTitle))
+                    {
+                        <p class="text-muted mb-4">الكورس: <strong>@Model.CourseTitle</strong></p>
+                    }
+
+                    <form method="post"
+                          asp-controller="Assignments"
+                          asp-action="Create"
+                          enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden" asp-for="CourseId" />
+                        <input type="hidden" asp-for="CourseTitle" />
+
+                        <div class="mb-3">
+                            <label asp-for="Title" class="form-label fw-semibold"></label>
+                            <input asp-for="Title" class="form-control" placeholder="مثال: تاسك 1 - بناء API باستخدام ASP.NET" />
+                            <span asp-validation-for="Title" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label fw-semibold"></label>
+                            <textarea asp-for="Description" class="form-control" rows="4"
+                                      placeholder="اشرح المطلوب من الطلاب بالتفصيل..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Deadline" class="form-label fw-semibold"></label>
+                            <input asp-for="Deadline" type="datetime-local" class="form-control" />
+                            <span asp-validation-for="Deadline" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="MaxScore" class="form-label fw-semibold"></label>
+                            <input asp-for="MaxScore" type="number" class="form-control" min="1" max="1000" />
+                            <span asp-validation-for="MaxScore" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="attachmentFile" class="form-label fw-semibold">ملف مرفق (PDF — اختياري)</label>
+                            <input type="file" id="attachmentFile" name="attachmentFile"
+                                   class="form-control" accept=".pdf" />
+                            <div class="form-text text-muted">صيغة مقبولة: PDF فقط</div>
+                            <span asp-validation-for="AttachmentFile" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary px-4">نشر التاسك</button>
+                            @if (Model?.CourseId > 0)
+                            {
+                                <a asp-controller="Courses" asp-action="Details" asp-route-id="@Model.CourseId"
+                                   class="btn btn-outline-secondary">
+                                    إلغاء
+                                </a>
+                            }
+                            else
+                            {
+                                <a asp-controller="Courses" asp-action="Index" class="btn btn-outline-secondary">إلغاء</a>
+                            }
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}
