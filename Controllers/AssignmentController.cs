@@ -21,13 +21,6 @@ public class AssignmentsController : Controller
 
     [HttpGet]
     [Authorize(Roles = "Instructor,Admin")]
-    public IActionResult Create()
-    {
-        return View();
-    }
-
-    [HttpGet]
-    [Authorize(Roles = "Instructor,Admin")]
     public IActionResult Create(int courseId)
     {
         var course = _context.Courses
@@ -101,6 +94,7 @@ public class AssignmentsController : Controller
     }
 
     [HttpGet]
+    [Authorize(Roles = "Instructor,Admin")]
     public IActionResult Details(int id)
     {
         var assignment = _context.Assignments

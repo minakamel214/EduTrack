@@ -131,17 +131,20 @@ namespace EduTrack.Controllers
                 {
                     System.IO.File.Delete(oldPath);
                 }
-
-                var folder = Path.Combine(_webHostEnvironment.WebRootPath, "images", "courses");
-                var fileName = Guid.NewGuid() + Path.GetExtension(ThumbnailFile.FileName);
-                var newPath = Path.Combine(folder, fileName);
-
-                using (var stream = new FileStream(newPath, FileMode.Create))
+                if (existingCourse.ThumbnailPath != null)
                 {
-                    ThumbnailFile.CopyTo(stream);
-                }
+                    var folder = Path.Combine(_webHostEnvironment.WebRootPath, "images", "courses");
+                    var fileName = Guid.NewGuid() + Path.GetExtension(ThumbnailFile.FileName);
+                    var newPath = Path.Combine(folder, fileName);
 
-                course.ThumbnailPath = fileName;
+
+                    using (var stream = new FileStream(newPath, FileMode.Create))
+                    {
+                        ThumbnailFile.CopyTo(stream);
+                    }
+
+                    course.ThumbnailPath = fileName;
+                }
             }
             else
             {

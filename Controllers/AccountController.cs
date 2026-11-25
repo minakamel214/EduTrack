@@ -67,10 +67,23 @@ namespace EduTrack.Controllers
                 UserName = email,
                 Address = address
             };
+
+           
             var result = _userManager.CreateAsync(user, password).Result;
             if (result.Succeeded)
             {
                 _userManager.AddToRoleAsync(user, "Student").Wait();
+
+                var student = new Student()
+                {
+                    UserId = user.Id,
+                    FullName = user.UserName,
+                    
+                };
+
+                _context.Students.Add(student);
+                _context.SaveChanges();
+
                 return RedirectToAction("Login", "Account");
             }
             else

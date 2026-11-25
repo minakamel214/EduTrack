@@ -43,7 +43,7 @@ namespace EduTrack.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Create(Instructor instructor, IFormFile? ImageFile, IWebHostEnvironment webHostEnvironment)
+        public IActionResult Create(Instructor instructor, IFormFile? ImageFile)
         {
             if (ModelState.IsValid)
             {
@@ -62,7 +62,7 @@ namespace EduTrack.Controllers
 
                 if (ImageFile != null && ImageFile.Length > 0)
                 {
-                    var uploadsFolder = Path.Combine(webHostEnvironment.WebRootPath, "images", "instructors");
+                    var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images", "instructors");
                     Directory.CreateDirectory(uploadsFolder);
 
                     string extension = Path.GetExtension(ImageFile.FileName);
@@ -85,6 +85,11 @@ namespace EduTrack.Controllers
                     ImagePath = savedFileName
                 };
 
+                if (!createUser.Succeeded || !roleAssignment.Succeeded)
+                {
+                    ModelState.AddModelError(string.Empty, "حدث خطأ أثناء إنشاء المستخدم أو تعيين الدور.");
+                    return View(instructor);
+                }
                 _context.Instructors.Add(instructorEntity);
                 _context.SaveChanges();
 
